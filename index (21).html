@@ -1,0 +1,354 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APC TECH LTD</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Inter', sans-serif; 
+      scroll-behavior: smooth; 
+      background-color: #0f172a; 
+      color: #e2e8f0; 
+    }
+    .nav-glow {
+      background: #1e293b;
+      box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);
+    }
+    .hero-bg {
+      background-image: url('https://source.unsplash.com/random/1600x900/?technology,futuristic,cyber');
+      background-size: cover;
+      background-position: center;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      animation: fadeIn 2s ease-in;
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    .section-animate {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideIn 1s ease-out forwards;
+    }
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .service-card, .portfolio-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: #1e293b;
+      border: 1px solid #334155;
+    }
+    .service-card:hover, .portfolio-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 255, 255, 0.4);
+    }
+    .testimonial-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      transition: transform 0.3s ease;
+    }
+    .testimonial-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+    }
+    .faq-item {
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      background: #1e293b;
+      border: 1px solid #334155;
+    }
+    .faq-item:hover {
+      background: #334155;
+    }
+    button:hover, a:hover {
+      transition: all 0.3s ease;
+    }
+    .hero-text {
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    }
+    .honeypot { display: none; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="text-white p-4 nav-glow fixed w-full top-0 z-10">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-2xl font-bold">APC TECH LTD</h1>
+      <div class="space-x-4">
+        <a href="#home" class="hover:text-cyan-400">Home</a>
+        <a href="#about" class="hover:text-cyan-400">About</a>
+        <a href="#services" class="hover:text-cyan-400">Services</a>
+        <a href="#portfolio" class="hover:text-cyan-400">Portfolio</a>
+        <a href="#testimonials" class="hover:text-cyan-400">Testimonials</a>
+        <a href="#faq" class="hover:text-cyan-400">FAQ</a>
+        <a href="#blog" class="hover:text-cyan-400">Blog</a>
+        <a href="#contact" class="hover:text-cyan-400">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-bg">
+    <div class="text-center bg-black bg-opacity-60 p-8 rounded-lg">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4 animate-pulse hero-text">Welcome to APC TECH LTD</h2>
+      <p class="text-xl md:text-2xl mb-6 hero-text">Pioneering Future-Ready Technology Solutions for Kenya and Beyond</p>
+      <a href="#contact" class="bg-cyan-500 text-white px-6 py-3 rounded-full hover:bg-cyan-600">Get in Touch</a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 bg-gray-900 section-animate">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">About APC TECH LTD</h2>
+      <p class="text-lg text-gray-300 max-w-3xl mx-auto">
+        Incorporated on June 30, 2025, under the Companies Act, 2015, APC TECH LTD is a Kenyan-based private limited company at the forefront of technological innovation. We specialize in advanced solutions like AI, blockchain, quantum applications, and hyperscale cloud, alongside web development, data analytics, and IT consultancy, empowering businesses to thrive in the digital era.
+      </p>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section id="services" class="py-16 bg-gray-800 section-animate">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">Our Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">AI Development</h3>
+          <p class="text-gray-300">Cutting-edge AI solutions, including machine learning models and predictive analytics, to automate and optimize business processes.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Blockchain</h3>
+          <p class="text-gray-300">Secure, decentralized solutions for supply chain, finance, and smart contracts, ensuring transparency and trust.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Quantum Apps</h3>
+          <p class="text-gray-300">Innovative quantum computing applications to solve complex problems in optimization and cryptography.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Cyber Defense</h3>
+          <p class="text-gray-300">Advanced cybersecurity frameworks to protect against threats, including penetration testing and threat intelligence.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Hyperscale Cloud</h3>
+          <p class="text-gray-300">Scalable cloud infrastructure for high-performance computing, storage, and application hosting on leading platforms.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Metaverse Labs</h3>
+          <p class="text-gray-300">Immersive virtual reality and augmented reality solutions for gaming, education, and virtual collaboration.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Web Application Development</h3>
+          <p class="text-gray-300">Custom web applications built with HTML, Python, and React, including e-commerce and management systems.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Network Engineering</h3>
+          <p class="text-gray-300">Secure, scalable networks with CCNA-certified expertise for optimal connectivity.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Data Analysis</h3>
+          <p class="text-gray-300">Advanced analytics using SPSS, Stata, Excel, Power BI, and SQL for data-driven insights.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">System Design</h3>
+          <p class="text-gray-300">Scalable IT systems for inventory, sales, and pharmacy management.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">IT Consultancy</h3>
+          <p class="text-gray-300">Expert guidance on cybersecurity, cloud solutions, and digital transformation.</p>
+        </div>
+        <div class="p-6 rounded-lg service-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Mobile App Development</h3>
+          <p class="text-gray-300">Cross-platform mobile apps for iOS and Android with seamless user experiences.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio Section -->
+  <section id="portfolio" class="py-16 bg-gray-900 section-animate">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">Our Portfolio</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-6 rounded-lg portfolio-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Pharmacy Management System</h3>
+          <p class="text-gray-300">A web-based system for tracking sales, stock, and expiry dates, built with React and MongoDB.</p>
+        </div>
+        <div class="p-6 rounded-lg portfolio-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Blockchain Supply Chain</h3>
+          <p class="text-gray-300">A decentralized platform for transparent supply chain tracking, built for a Kenyan retailer.</p>
+        </div>
+        <div class="p-6 rounded-lg portfolio-card">
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">AI-Powered Analytics</h3>
+          <p class="text-gray-300">Predictive analytics dashboard using Power BI and SQL for a healthcare client.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials" class="py-16 bg-gray-800 section-animate">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">What Our Clients Say</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="p-6 rounded-lg testimonial-card">
+          <p class="text-gray-300 mb-4">"APC TECH LTD's AI-driven patient management system revolutionized our clinic's efficiency."</p>
+          <p class="font-semibold text-cyan-400">Ian Qurgatt, Medical Practitioner in Germany</p>
+        </div>
+        <div class="p-6 rounded-lg testimonial-card">
+          <p class="text-gray-300 mb-4">"Their pharmacy management system transformed our stock tracking, saving us time and costs."</p>
+          <p class="font-semibold text-cyan-400">Winny, CEO of Apotek</p>
+        </div>
+        <div class="p-6 rounded-lg testimonial-card">
+          <p class="text-gray-300 mb-4">"APC TECH LTD's data analytics provided critical insights for our weather forecasting models."</p>
+          <p class="font-semibold text-cyan-400">Mary Korir, Meteorologist, University of Eldoret</p>
+        </div>
+        <div class="p-6 rounded-lg testimonial-card">
+          <p class="text-gray-300 mb-4">"Their cyber defense solutions secured our network, ensuring reliable operations."</p>
+          <p class="font-semibold text-cyan-400">Treiza Wayu</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq" class="py-16 bg-gray-900 section-animate">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">Frequently Asked Questions</h2>
+      <div class="max-w-3xl mx-auto">
+        <div class="faq-item p-4 mb-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2 text-cyan-400">What industries do you serve?</h3>
+          <p class="text-gray-300">We serve healthcare, retail, education, finance, and SMEs with advanced tech solutions.</p>
+        </div>
+        <div class="faq-item p-4 mb-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2 text-cyan-400">How long does a blockchain project take?</h3>
+          <p class="text-gray-300">Blockchain solutions typically take 6-12 weeks, depending on complexity.</p>
+        </div>
+        <div class="faq-item p-4 mb-4 rounded-lg">
+          <h3 class="text-lg font-semibold mb-2 text-cyan-400">Do you offer training for AI and data tools?</h3>
+          <p class="text-gray-300">Yes, we provide training for AI, SPSS, Stata, Power BI, and SQL to empower your team.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Teaser Section -->
+  <section id="blog" class="py-16 bg-gray-800 section-animate">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">Our Insights</h2>
+      <div class="max-w-3xl mx-auto text-center">
+        <p class="text-gray-300 mb-4">Explore our blog for insights on AI, blockchain, quantum computing, and digital transformation in Kenya.</p>
+        <a href="#" class="bg-cyan-500 text-white px-6 py-3 rounded-full hover:bg-cyan-600">Coming Soon</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-16 bg-gray-900 section-animate">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8 text-cyan-400">Contact Us</h2>
+      <div class="max-w-lg mx-auto">
+        <form id="contact-form" action="https://formsubmit.co/alwynnthohh@gmail.com" method="POST">
+          <input type="text" name="_honey" class="honeypot">
+          <div class="mb-4">
+            <label class="block text-gray-300 mb-2" for="name">Name</label>
+            <input type="text" id="name" name="name" class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600" placeholder="Your Name" required>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-300 mb-2" for="email">Email</label>
+            <input type="email" id="email" name="email" class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600" placeholder="Your Email" required>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-300 mb-2" for="message">Message</label>
+            <textarea id="message" name="message" class="w-full p-3 border rounded-lg bg-gray-800 text-white border-gray-600" rows="5" placeholder="Your Message" required></textarea>
+          </div>
+          <button type="submit" class="bg-cyan-500 text-white px-6 py-3 rounded-full hover:bg-cyan-600">Send Message</button>
+        </form>
+        <p id="form-message" class="text-center mt-4 text-green-400 hidden">Message sent successfully!</p>
+      </div>
+      <p class="text-center mt-8 text-gray-300">
+        Email: alwynnthohh@gmail.com | Phone: +254 700 523627 | Grade A Commercial, Lavington
+      </p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-4 text-center">
+    <p>© 2025 APC TECH LTD. All rights reserved.</p>
+  </footer>
+
+  <!-- JavaScript for Interactivity -->
+  <script>
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Form submission feedback
+    document.getElementById('contact-form').addEventListener('submit', function() {
+      const formMessage = document.getElementById('form-message');
+      formMessage.classList.remove('hidden');
+      setTimeout(() => formMessage.classList.add('hidden'), 3000);
+      this.reset();
+    });
+
+    // Section animation on scroll
+    const sections = document.querySelectorAll('.section-animate');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animation = 'slideIn 1s ease-out forwards';
+        }
+      });
+    }, { threshold: 0.2 });
+    sections.forEach(section => observer.observe(section));
+  </script>
+</body>
+</html>
